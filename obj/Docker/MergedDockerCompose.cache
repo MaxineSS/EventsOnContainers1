@@ -1,0 +1,125 @@
+networks:
+  backend: {}
+  frontend: {}
+services:
+  basket.data:
+    container_name: basketdatas
+    image: redis
+    networks:
+      backend: null
+    ports:
+    - published: 6026
+      target: 6379
+  cart:
+    build:
+      context: D:\Kal\EventProjAugust\EventBriteOnContainers\CartApi
+      dockerfile: Dockerfile
+    container_name: cartapi
+    depends_on:
+    - basket.data
+    - tokenserver
+    environment:
+      ConnectionString: basket.data
+      IdentityUrl: http://192.168.4.24:6022
+    image: events/cartapi
+    networks:
+      backend: null
+      frontend: null
+    ports:
+    - published: 6023
+      target: 80
+  catalog:
+    build:
+      context: D:\Kal\EventProjAugust\EventBriteOnContainers\EventCatalogAPI
+      dockerfile: Dockerfile
+    container_name: eventscatalogapi
+    depends_on:
+    - mssqlserver
+    environment:
+      DatabaseName: EventsDb
+      DatabasePassword: EventApi(!)
+      DatabaseServer: mssqlserver
+      DatabaseUser: sa
+      ExternalCatalogBaseUrl: http://localhost:6020
+    image: events/catalogapi
+    networks:
+      backend: null
+      frontend: null
+    ports:
+    - published: 6020
+      target: 80
+  mssqlserver:
+    container_name: eventssqlserver
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: EventApi(!)
+    image: microsoft/mssql-server-linux:latest
+    networks:
+      backend: null
+    ports:
+    - published: 1440
+      target: 1433
+  order:
+    build:
+      context: D:\Kal\EventProjAugust\EventBriteOnContainers\OrderApi
+      dockerfile: Dockerfile
+    container_name: orderapi
+    depends_on:
+    - mssqlserver
+    - tokenserver
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      DatabaseName: OrdersDb
+      DatabasePassword: EventApi(!)
+      DatabaseServer: mssqlserver
+      DatabaseUser: sa
+      IdentityUrl: http://192.168.4.24:6022
+    image: events/orderapi
+    networks:
+      backend: null
+      frontend: null
+    ports:
+    - published: 6025
+      target: 80
+  tokenserver:
+    build:
+      context: D:\Kal\EventProjAugust\EventBriteOnContainers\TokenServiceApi
+      dockerfile: Dockerfile
+    container_name: tokenserviceapi
+    depends_on:
+    - mssqlserver
+    environment:
+      Mvcclient: http://localhost:6021
+    image: events/tokenapi
+    networks:
+      backend: null
+      frontend: null
+    ports:
+    - published: 6022
+      target: 80
+  webmvc:
+    build:
+      context: D:\Kal\EventProjAugust\EventBriteOnContainers\WebClientMvc
+      dockerfile: Dockerfile
+    container_name: eventShop
+    depends_on:
+    - cart
+    - catalog
+    - order
+    - tokenserver
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      CallBackUrl: http://localhost:6021
+      CartUrl: http://cart
+      CatalogUrl: http://catalog
+      IdentityUrl: http://192.168.4.24:6022
+      OrderUrl: http://order
+      StripePrivateKey: sk_test_51HE0vnJBXzqpcqQBQEJpRN7M85459NvSCl2J7QJ7FANG5r8klITqOjEDH3F2WDrExPjQ3R2uHVK3VHwoS4Lb7FCi00bX2EiJGM
+      StripePublicKey: pk_test_51HE0vnJBXzqpcqQBraMAPzLSkgf4DBz6XUenU6NG9d70iwDaFl3e88sQBLKKy4fVIaX0XcG9AGYyJksuSUP4G3X3005OCeZMAl
+    image: events/webclientmvc
+    networks:
+      frontend: null
+    ports:
+    - published: 6021
+      target: 80
+version: '3.4'

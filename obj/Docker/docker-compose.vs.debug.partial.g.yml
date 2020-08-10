@@ -1,0 +1,141 @@
+version: '3.4'
+
+services:
+  cart:
+    image: events/cartapi:dev
+    build:
+      target: base
+      labels:
+        com.microsoft.created-by: "visual-studio"
+        com.microsoft.visual-studio.project-name: "CartApi"
+    environment:
+      - DOTNET_USE_POLLING_FILE_WATCHER=1
+      - ASPNETCORE_LOGGING__CONSOLE__DISABLECOLORS=true
+      - NUGET_FALLBACK_PACKAGES=/root/.nuget/fallbackpackages
+    volumes:
+      - D:\Kal\EventProjAugust\EventBriteOnContainers\CartApi:/app
+      - D:\Kal\EventProjAugust\EventBriteOnContainers\CartApi:/src
+      - C:\Users\U.S.S Britanic\vsdbg\vs2017u5:/remote_debugger:rw
+      - C:\Users\U.S.S Britanic\.nuget\packages\:/root/.nuget/packages:ro
+      - C:\Microsoft\Xamarin\NuGet\:/root/.nuget/fallbackpackages:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+
+    entrypoint: tail -f /dev/null
+    labels:
+      com.microsoft.visualstudio.debuggee.program: "dotnet"
+      com.microsoft.visualstudio.debuggee.arguments: " --additionalProbingPath /root/.nuget/packages --additionalProbingPath /root/.nuget/fallbackpackages  \"/app/bin/Debug/netcoreapp3.1/CartApi.dll\""
+      com.microsoft.visualstudio.debuggee.workingdirectory: "/app"
+      com.microsoft.visualstudio.debuggee.killprogram: "/bin/sh -c \"if PID=$$(pidof dotnet); then kill $$PID; fi\""
+    tty: true
+  catalog:
+    image: events/catalogapi:dev
+    build:
+      target: base
+      labels:
+        com.microsoft.created-by: "visual-studio"
+        com.microsoft.visual-studio.project-name: "EventCatalogApi"
+    environment:
+      - DOTNET_USE_POLLING_FILE_WATCHER=1
+      - ASPNETCORE_LOGGING__CONSOLE__DISABLECOLORS=true
+      - NUGET_FALLBACK_PACKAGES=/root/.nuget/fallbackpackages
+    volumes:
+      - D:\Kal\EventProjAugust\EventBriteOnContainers\EventCatalogAPI:/app
+      - D:\Kal\EventProjAugust\EventBriteOnContainers\EventCatalogAPI:/src
+      - C:\Users\U.S.S Britanic\vsdbg\vs2017u5:/remote_debugger:rw
+      - C:\Users\U.S.S Britanic\.nuget\packages\:/root/.nuget/packages:ro
+      - C:\Microsoft\Xamarin\NuGet\:/root/.nuget/fallbackpackages:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+
+    entrypoint: tail -f /dev/null
+    labels:
+      com.microsoft.visualstudio.debuggee.program: "dotnet"
+      com.microsoft.visualstudio.debuggee.arguments: " --additionalProbingPath /root/.nuget/packages --additionalProbingPath /root/.nuget/fallbackpackages  \"/app/bin/Debug/netcoreapp3.1/EventCatalogApi.dll\""
+      com.microsoft.visualstudio.debuggee.workingdirectory: "/app"
+      com.microsoft.visualstudio.debuggee.killprogram: "/bin/sh -c \"if PID=$$(pidof dotnet); then kill $$PID; fi\""
+    tty: true
+
+  order:
+    image: events/orderapi:dev
+    build:
+      target: base
+      labels:
+        com.microsoft.created-by: "visual-studio"
+        com.microsoft.visual-studio.project-name: "OrderApi"
+    environment:
+      - DOTNET_USE_POLLING_FILE_WATCHER=1
+      - ASPNETCORE_LOGGING__CONSOLE__DISABLECOLORS=true
+      - NUGET_FALLBACK_PACKAGES=/root/.nuget/fallbackpackages
+    volumes:
+      - D:\Kal\EventProjAugust\EventBriteOnContainers\OrderApi:/app
+      - D:\Kal\EventProjAugust\EventBriteOnContainers\OrderApi:/src
+      - C:\Users\U.S.S Britanic\vsdbg\vs2017u5:/remote_debugger:rw
+      - C:\Users\U.S.S Britanic\.nuget\packages\:/root/.nuget/packages:ro
+      - C:\Microsoft\Xamarin\NuGet\:/root/.nuget/fallbackpackages:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+
+    entrypoint: tail -f /dev/null
+    labels:
+      com.microsoft.visualstudio.debuggee.program: "dotnet"
+      com.microsoft.visualstudio.debuggee.arguments: " --additionalProbingPath /root/.nuget/packages --additionalProbingPath /root/.nuget/fallbackpackages  \"/app/bin/Debug/netcoreapp3.1/OrderApi.dll\""
+      com.microsoft.visualstudio.debuggee.workingdirectory: "/app"
+      com.microsoft.visualstudio.debuggee.killprogram: "/bin/sh -c \"if PID=$$(pidof dotnet); then kill $$PID; fi\""
+    tty: true
+
+  tokenserver:
+    image: events/tokenapi:dev
+    build:
+      target: base
+      labels:
+        com.microsoft.created-by: "visual-studio"
+        com.microsoft.visual-studio.project-name: "TokenServiceApi"
+    environment:
+      - DOTNET_USE_POLLING_FILE_WATCHER=1
+      - ASPNETCORE_LOGGING__CONSOLE__DISABLECOLORS=true
+      - NUGET_FALLBACK_PACKAGES=/root/.nuget/fallbackpackages
+    volumes:
+      - D:\Kal\EventProjAugust\EventBriteOnContainers\TokenServiceApi:/app
+      - D:\Kal\EventProjAugust\EventBriteOnContainers\TokenServiceApi:/src
+      - C:\Users\U.S.S Britanic\vsdbg\vs2017u5:/remote_debugger:rw
+      - C:\Users\U.S.S Britanic\.nuget\packages\:/root/.nuget/packages:ro
+      - C:\Microsoft\Xamarin\NuGet\:/root/.nuget/fallbackpackages:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+
+    entrypoint: tail -f /dev/null
+    labels:
+      com.microsoft.visualstudio.debuggee.program: "dotnet"
+      com.microsoft.visualstudio.debuggee.arguments: " --additionalProbingPath /root/.nuget/packages --additionalProbingPath /root/.nuget/fallbackpackages  \"/app/bin/Debug/netcoreapp2.1/TokenServiceApi.dll\""
+      com.microsoft.visualstudio.debuggee.workingdirectory: "/app"
+      com.microsoft.visualstudio.debuggee.killprogram: "/bin/sh -c \"if PID=$$(pidof dotnet); then kill $$PID; fi\""
+    tty: true
+
+  webmvc:
+    image: events/webclientmvc:dev
+    build:
+      target: base
+      labels:
+        com.microsoft.created-by: "visual-studio"
+        com.microsoft.visual-studio.project-name: "WebClientMvc"
+    environment:
+      - DOTNET_USE_POLLING_FILE_WATCHER=1
+      - ASPNETCORE_LOGGING__CONSOLE__DISABLECOLORS=true
+      - NUGET_FALLBACK_PACKAGES=/root/.nuget/fallbackpackages
+    volumes:
+      - D:\Kal\EventProjAugust\EventBriteOnContainers\WebClientMvc:/app
+      - D:\Kal\EventProjAugust\EventBriteOnContainers\WebClientMvc:/src
+      - C:\Users\U.S.S Britanic\vsdbg\vs2017u5:/remote_debugger:rw
+      - C:\Users\U.S.S Britanic\.nuget\packages\:/root/.nuget/packages:ro
+      - C:\Microsoft\Xamarin\NuGet\:/root/.nuget/fallbackpackages:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+
+    entrypoint: tail -f /dev/null
+    labels:
+      com.microsoft.visualstudio.debuggee.program: "dotnet"
+      com.microsoft.visualstudio.debuggee.arguments: " --additionalProbingPath /root/.nuget/packages --additionalProbingPath /root/.nuget/fallbackpackages  \"/app/bin/Debug/netcoreapp3.1/WebClientMvc.dll\""
+      com.microsoft.visualstudio.debuggee.workingdirectory: "/app"
+      com.microsoft.visualstudio.debuggee.killprogram: "/bin/sh -c \"if PID=$$(pidof dotnet); then kill $$PID; fi\""
+    tty: true

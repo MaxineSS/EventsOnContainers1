@@ -1,0 +1,125 @@
+version: '3.4'
+
+networks:
+  frontend:
+  backend:
+
+services:
+  catalog:
+    image: events/catalogapi
+    build:
+      context: .\EventCatalogAPI
+      dockerfile: Dockerfile
+    environment:
+      ExternalCatalogBaseUrl: http://localhost:6020
+      DatabaseServer: mssqlserver
+      DatabaseName: EventsDb
+      DatabaseUser: sa
+      DatabasePassword: EventApi(!)
+    ports:
+      - "6020:80"
+    container_name: eventscatalogapi
+    networks:
+      - frontend
+      - backend
+    depends_on:
+      - mssqlserver
+
+  webmvc:
+    image: events/webclientmvc
+    build:
+      context: .\WebClientMvc
+      dockerfile: Dockerfile
+    environment:
+      CatalogUrl: http://catalog
+      CartUrl: http://cart
+      IdentityUrl: http://1234567:6022
+      CallBackUrl: http://localhost:6021
+      OrderUrl: http://order
+      StripePublicKey: pk_test_publickey
+      StripePrivateKey: sk_test_key
+    ports:
+      - "6021:80"
+    container_name: eventShop
+    networks:
+      - frontend
+    depends_on:
+      - catalog
+      - cart
+      - order
+      - tokenserver
+
+  tokenserver:
+    build:
+      context: .\TokenServiceApi
+      dockerfile: Dockerfile
+    image: events/tokenapi
+    environment:
+      Mvcclient: http://localhost:6021
+    ports:
+      - "6022:80"
+    container_name: tokenserviceapi
+    networks:
+      - backend
+      - frontend
+    depends_on:
+      - mssqlserver
+
+  cart:
+    build:
+      context: .\CartApi
+      dockerfile: Dockerfile
+    image: events/cartapi
+    environment:
+      IdentityUrl: http://1234567:6022
+      ConnectionString: basket.data
+    ports:
+      - "6023:80"
+    container_name: cartapi
+    networks:
+      - backend
+      - frontend
+    depends_on:
+      - tokenserver
+      - basket.data
+
+  order:
+    build:
+      context: .\OrderApi
+      dockerfile: Dockerfile
+    image: events/orderapi
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      IdentityUrl: http://1234567:6022
+      DatabaseServer: mssqlserver
+      DatabaseName: OrdersDb
+      DatabaseUser: sa
+      DatabasePassword: EventApi(!)
+    ports:
+      - "6025:80"
+    container_name: orderapi
+    networks:
+      - backend
+      - frontend
+    depends_on:
+      - mssqlserver
+      - tokenserver
+
+  mssqlserver:
+    image: "microsoft/mssql-server-linux:latest"
+    environment:
+      ACCEPT_EULA: Y
+      SA_PASSWORD: EventApi(!)
+    ports:
+      - "1440:1433"
+    container_name: eventssqlserver
+    networks:
+      - backend
+
+  basket.data:
+    image: redis
+    container_name: basketdatas
+    ports:
+      - "6026:6379"
+    networks:
+      - backend
